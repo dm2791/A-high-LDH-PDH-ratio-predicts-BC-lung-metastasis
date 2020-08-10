@@ -1,7 +1,5 @@
 % Analyze Seahorse Data Mito Stress Assay
 
-InPath = '/Volumes/xavierlab/Deepti/MetastasisMetabolismPaper/MatlabFig_files';
-cd(InPath)
 %% make table
 time=[1.31
 7.76
