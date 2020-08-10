@@ -1,6 +1,6 @@
 %% analyze hexokinase data
 
-hexokinase_50min=xlsread('/Volumes/xavierlab/Deepti/MetastasisMetabolismPaper/MatlabFig_files/hexokinase50min.xlsx','A38:BA43');
+hexokinase_50min=xlsread('hexokinase50min.xlsx','A38:BA43');
 standard=[];
 j=1;
 for i=3:8
@@ -112,7 +112,7 @@ pvalL=mdl.Coefficients(3,6).pValue;
 
 %% analyze pfk data
 
-pfk_5min=xlsread('/Volumes/xavierlab/Deepti/MetastasisMetabolismPaper/MatlabFig_files/PFK5min.xlsx','A38:BA43');
+pfk_5min=xlsread('PFK5min.xlsx','A38:BA43');
 standard=[];
 j=1;
 for i=3:8
@@ -223,7 +223,7 @@ pvalL=mdl.Coefficients(3,6).pValue;
 
 %% analyze g3pdh data
 
-g3pdh_0min=xlsread('/Volumes/xavierlab/Deepti/MetastasisMetabolismPaper/MatlabFig_files/G3PDHREPEAT0MIN.xlsx','A38:BA43');
+g3pdh_0min=xlsread('G3PDHREPEAT0MIN.xlsx','A38:BA43');
 standard=[];
 j=1;
 for i=3:8
@@ -335,7 +335,7 @@ pvalL=mdl.Coefficients(3,6).pValue;
 
 %% analyze pk data
 
-pk_fl0min=xlsread('/Volumes/xavierlab/Deepti/MetastasisMetabolismPaper/MatlabFig_files/PK0min.xlsx','A38:BA43');
+pk_fl0min=xlsread('PK0min.xlsx','A38:BA43');
 standard=[];
 j=1;
 for i=3:8
