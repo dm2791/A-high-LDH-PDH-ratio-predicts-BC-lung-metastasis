@@ -1,7 +1,5 @@
 % unsupervised analysis of metabolon data
 %% load data
-InPath = '/Users/mathurd/Desktop/Xavier Lab';
-cd(InPath)
 breast = readtable('breastnorm.xlsx');
 
 %% heatmap
