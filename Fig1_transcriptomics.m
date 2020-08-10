@@ -17,7 +17,7 @@ geneIDbrain=annotation.Var15(rowsb);
 
 %% heatmaps
 %get hallmark glycolysis genes
-glyclistbig=readtable('/Users/mathurd/Downloads/geneset(1).txt');
+glyclistbig=readtable('geneset(1).txt');
 glyclist=table2array(glyclistbig);
 glycbrain=[];
 glyclung=[];
