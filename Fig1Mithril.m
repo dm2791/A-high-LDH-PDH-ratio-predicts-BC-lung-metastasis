@@ -1,6 +1,4 @@
 %% analyze mithril output
-InPath = '/Users/mathurd/Desktop/Xavier Lab/MITHrIL';
-cd(InPath)
 %% waterfall plots
 lungout=readtable('output_mithril_lung.txt');
 ranked_lungout=sortrows(lungout,3);
