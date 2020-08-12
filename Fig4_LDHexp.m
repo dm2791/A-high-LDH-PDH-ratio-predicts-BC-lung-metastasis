@@ -1,5 +1,5 @@
 % analyze RNA expression data 231 cells
-
+%need to download chip file; see Read Me for instructions
 %% read files
 chipfile=readtable('HG-U133A.na36annot.txt');
 annotation=chipfile(26:end,1:19);
