@@ -1,9 +1,13 @@
 # Divergent-use-of-metabolic-fluxes-in-breast-cancer-metastasis
-Codes to generate figures for the "Divergent use of metabolic fluxes in breast cancer metastasis" paper
+MATLAB scripts to analyze the data and make the figures for the paper "Divergent use of metabolic fluxes in breast cancer metastasis".
 
-The MATLAB codes used to generate figures and supplemental figures for this paper, as well as the raw data files required for the codes, are in this folder. 
+This repository includes some of the data analyzed. 
 
-In addition, the following large files must be downloaded by the user:
+breastnorm.xlsx: Metabolomics data produced by Metabolon.
+[list other data files here]
+
+
+The following large files must be downloaded by the user:
 
 1) For codes involving mRNA analysis: affymetrix chip annotation
 Download from: http://www.affymetrix.com/support/technical/byproduct.affx?product=hgu133
