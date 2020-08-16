@@ -1,17 +1,26 @@
 % unsupervised analysis of metabolon data
-%% load data
+%% load the metabolomics data from file breastnorm.xlsx
 breast = readtable('breastnorm.xlsx');
 
 %% heatmap
 breastmat=table2array(breast(10:end,15:end));
-breastmat=cellfun(@str2num,breastmat);
+% Windows PCs and other systems may load the xlsx differently
+% if the data is loaded as cell convert to numeric here
+if ~isnumeric(breastmat)
+    breastmat=cellfun(@str2num,breastmat);
+end
 clustergram(breastmat,'Symmetric','false','Standardize','row','Colormap','redbluecmap');
 
-%glycolysis pathway only
-keepmets=find(strcmp(breast.Var4,'Glycolysis, Gluconeogenesis, and Pyruvate Metabolism'));
-breastmatglyc=breast(keepmets,:);
+%% get the data for the glycolysis pathway only
+glucolysisIdx=find(strcmp(breast.Var4,'Glycolysis, Gluconeogenesis, and Pyruvate Metabolism'));
+breastmatglyc=breast(glucolysisIdx,:);
 breastmatglyc=table2array(breastmatglyc(:,15:end));
-breastmatglyc=cellfun(@str2num,breastmatglyc);
+
+% Windows PCs and other systems may load the xlsx differently
+% if the data is loaded as cell convert to numeric here
+if ~isnumeric(breastmatglyc)
+    breastmatglyc=cellfun(@str2num,breastmatglyc);
+end
 
 breastparentalmean=mean(breastmatglyc(:,1:5),2);
 parentalFC=breastmatglyc(:,1:5)./breastparentalmean;
@@ -19,7 +28,7 @@ brainFC=breastmatglyc(:,6:10)./breastparentalmean;
 lungFC=breastmatglyc(:,11:15)./breastparentalmean;
 FCglyc=[parentalFC,brainFC,lungFC];
 cgo=clustergram(FCglyc(:,6:end),'Symmetric','false','Colormap','redbluecmap');
-glycmets=breast.Var2(keepmets);
+glycmets=breast.Var2(glucolysisIdx);
 set(cgo,'RowLabels',glycmets)
 
 % get bar plot of glyc metabs
@@ -39,8 +48,7 @@ for i=1:length(glycmets)
 end
 
 %% pca
-breastmat=table2array(breast(10:end,15:end))';
-breastmat=cellfun(@str2num,breastmat);
+
 [coeff,score,latent,tsquared,explained,mu] = pca(breastmat);
 group=repmat({'p'},1,5);
 group=[group,repmat({'b'},1,5)];
@@ -55,8 +63,8 @@ selectlabels2=selectlabels;
 selectlabels2(~keepfew2)={' '};
 selectlabels3=selectlabels(keepfew);
 
- figure
- h=biplot(coeff(:,1:2),'Scores',score(:,1:2),'Varlabels',selectlabels2,'Color',[.7,.7,.7]);
+figure
+h=biplot(coeff(:,1:2),'Scores',score(:,1:2),'Varlabels',selectlabels2,'Color',[.7,.7,.7]);
 hID = get(h, 'tag');
 hPt = h(strcmp(hID,'obsmarker'));
 set(hPt(1:5), 'Color', [0.1804    0.1922    0.5725],'MarkerSize', 5)
@@ -69,13 +77,11 @@ set(hPt([4,9,14]), 'Marker', '+')
 set(hPt([5,10,15]), 'Marker', 'p')
 
  
- % glucose inset
- breastmatglyc_mean=[mean(breastmatglyc(:,1:5),2),mean(breastmatglyc(:,6:10),2),mean(breastmatglyc(:,11:15),2)];
+% glucose inset
+breastmatglyc_mean=[mean(breastmatglyc(:,1:5),2),mean(breastmatglyc(:,6:10),2),mean(breastmatglyc(:,11:15),2)];
 figure,bar(breastmatglyc_mean(5,:));
 
 %% plsr to compare brain and lung breast mets
-breastmat=table2array(breast(10:end,15:end));
-breastmat=cellfun(@str2num,breastmat);
 X=log([breastmat(:,6:10)';breastmat(:,11:15)']);
 Y=[repmat(0,5,1);repmat(1,5,1)];
 [Xloadings,Yloadings,Xscores,Yscores,betaPLS10,PLSPctVar,mse,stats] = plsregress(X,Y,9);
