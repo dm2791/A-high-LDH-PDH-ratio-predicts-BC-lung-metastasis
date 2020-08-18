@@ -1,7 +1,7 @@
 # Divergent-use-of-metabolic-fluxes-in-breast-cancer-metastasis
 MATLAB scripts to analyze the data and make the figures for the paper "Divergent use of metabolic fluxes in breast cancer metastasis".
 
-This repository includes some of the data analyzed. 
+This repository includes some of the data analyzed: 
 
 figure1_metabolomics_and_mithril/breastnorm.xlsx: Metabolomics data produced by Metabolon.
 figure1_metabolomics_and_mithril/geneset.txt: the genes in the GLYCOLYSIS gene set
@@ -25,8 +25,13 @@ Download from: http://www.affymetrix.com/support/technical/byproduct.affx?produc
 HG-U133A Annotations, CSV format, Release 36 (19 MB, 7/12/16)
 Save as .txt file
 
+
+
 2) For Metastatic Breast Cancer Project Analysis: patient data files
 https://www.cbioportal.org/study/summary?id=brca_mbcproject_wagle_2017
 (MBCproject cBioPortal data version March 2020)
 
+
+Computational analysis of metabolic fluxes where implmented in the Python notebook:
+figure3_fba_enzyme_activities/fba/main.ipynb
 
