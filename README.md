@@ -38,4 +38,3 @@ figure3_fba_enzyme_activities/fba/main.ipynb
 The directory figure3_fba_enzyme_activities/fba/ is a standalone folder that includes all necessary input files for
 the Python notebook to run. These input files are: (1) metabolic model (mammalian_cell_model_final.xlsx); (2) YSI data (YSI.xlsx);
 (3) Seahorse data (Seahorse_atp.xlsx). Installation of the following python packages is required: pandas, numpy, seaborn, cobra, sklearn.
-    "from cobra.flux_analysis import flux_variability_analysis\n",ns
