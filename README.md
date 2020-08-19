@@ -29,7 +29,12 @@ Save as .txt file
 https://www.cbioportal.org/study/summary?id=brca_mbcproject_wagle_2017
 (MBCproject cBioPortal data version March 2020)
 
+3) For Metastatic Breast Cancer Project Analysis: UMAP code
+https://umap-learn.readthedocs.io/en/latest/
+
 
 Computational analysis of metabolic fluxes where implmented in the Python notebook:
 figure3_fba_enzyme_activities/fba/main.ipynb
+
+
 
