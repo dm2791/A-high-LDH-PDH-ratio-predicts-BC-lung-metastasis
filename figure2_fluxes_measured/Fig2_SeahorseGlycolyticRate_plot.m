@@ -20,7 +20,7 @@ replicate=repmat(replicate,11,1);
 parentalO2=[];
 brm2O2=[];
 lm2O2=[];
-data=readtable('Deepti_231_test_GlycolyticRate_050219_norm.xlsx','Sheet','Normalized Rate (Columns)');
+data=readtable('glycolyticratedata.csv');
 for i=1:11
     m = table2array(data(i,2:9))';
     if ~isnumeric(m)
