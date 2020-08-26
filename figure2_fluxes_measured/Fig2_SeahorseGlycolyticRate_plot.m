@@ -20,25 +20,11 @@ replicate=repmat(replicate,11,1);
 parentalO2=[];
 brm2O2=[];
 lm2O2=[];
-data=readtable('glycolyticratedata.csv');
+data=readtable('glycolyticratedata_O2.csv');
 for i=1:11
-    m = table2array(data(i,2:9))';
-    if ~isnumeric(m)
-        m = cellfun(@str2num,m);
-    end
-    parentalO2=[parentalO2;m];
-    
-    m = table2array(data(i,11:18))';
-    if ~isnumeric(m)
-        m = cellfun(@str2num,m);
-    end
-    brm2O2=[brm2O2;m];
-    
-    m = table2array(data(i,20:27))';
-    if ~isnumeric(m)
-        m = cellfun(@str2num,m);
-    end
-    lm2O2=[lm2O2;m];
+    parentalO2=[parentalO2;table2array(data(i,1:8))'];
+    brm2O2=[brm2O2;table2array(data(i,9:16))'];
+    lm2O2=[lm2O2;table2array(data(i,17:24))'];
 end
 treatment=repmat([0:1]',24,1);
 treatment=[treatment;repmat([2],40,1)];
@@ -50,27 +36,14 @@ O2stacked=stack(O2data,{'parentalO2','brm2O2','lm2O2'},...
     'NewDataVariableName','O2',...
     'IndexVariableName','cellline');
 
+data=readtable('glycolyticratedata_PER.csv');
 parentalPER=[];
 brm2PER=[];
 lm2PER=[];
-for i=33:43
-    m = table2array(data(i,2:9))';
-    if ~isnumeric(m)
-        m = cellfun(@str2num,m);
-    end
-    parentalPER=[parentalPER;m];
-    
-    m = table2array(data(i,11:18))';
-    if ~isnumeric(m)
-        m = cellfun(@str2num,m);
-    end
-    brm2PER=[brm2PER;m];
-        
-    m = table2array(data(i,20:27))';
-    if ~isnumeric(m)
-        m = cellfun(@str2num,m);
-    end
-    lm2PER=[lm2PER;m];
+for i=1:11
+    parentalPER=[parentalPER;table2array(data(i,1:8))'];
+    brm2PER=[brm2PER;table2array(data(i,9:16))'];
+    lm2PER=[lm2PER;table2array(data(i,17:24))'];
 end
 PERdata = table(time,treatment,replicate,parentalPER,brm2PER,lm2PER);
 PERstacked=stack(PERdata,{'parentalPER','brm2PER','lm2PER'},...
