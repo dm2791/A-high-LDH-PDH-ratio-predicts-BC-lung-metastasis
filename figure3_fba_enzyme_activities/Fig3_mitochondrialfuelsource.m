@@ -35,10 +35,10 @@ capmean=mean(capacitypercent,1);
 capstd=std(capacitypercent,1);
 flexibilitymean=capmean-depmean;
 
-%% moles of usage pmol/cell/hr
+%% moles of usage 
 dependency_total=baselined-drug1d;
-glut=dependency_total(:,1:3)*60/5000*.8; 
-gluc=dependency_total(:,7:9)*60/5000;
+glut=dependency_total(:,1:3); 
+gluc=dependency_total(:,7:9);
 
 meanglut=mean(glut);
 meangluc=mean(gluc);
