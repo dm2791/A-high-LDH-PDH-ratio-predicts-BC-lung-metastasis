@@ -1,6 +1,6 @@
 % YSI calculations
 %% load data
-YSIdata=readtable('YSI_data.xlsx','Range','E5:H13','ReadVariableNames',false);
+YSIdata=readtable('YSIdata.csv');
 YSIdata=table2array(YSIdata);
 glucosedata=YSIdata(:,1);
 lactatedata=YSIdata(:,2);
