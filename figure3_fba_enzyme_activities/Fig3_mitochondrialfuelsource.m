@@ -1,21 +1,8 @@
 % Analyze Seahorse Mito Flex assay
 
 %% extract data
-alldata=readtable('Flexibility-XF Mito Fuel Flex Test_231test2_071019.xlsx','Sheet','Rate (Plates)','Range','C5:N181');
-alldata=table2array(alldata);
-alldata=[zeros(177,1),alldata];
-
-timepoints=15;
-dependency=[];
-capacity=[];
-%counter=2;
-counter=1;
-for i=1:timepoints
-    dependency=[dependency;alldata(counter:counter+3,3:11)];
-    capacity=[capacity;alldata(counter+4:counter+7,3:11)];
-    counter=counter+12;
-end
-
+dependency=readmatrix('dependencymat.csv');
+capacity=readmatrix('capacitymat.csv');
 %% using only last measurement in interval
 baselined=dependency(9:12,:);
 baselinec=capacity(9:12,:);
