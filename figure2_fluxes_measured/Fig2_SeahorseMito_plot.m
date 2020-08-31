@@ -21,11 +21,11 @@ replicate=repmat(replicate,12,1);
 parentalO2=[];
 brm2O2=[];
 lm2O2=[];
-data=xlsread('231_mito.xlsx','Normalized Rate (Columns)');
+data=readmatrix('mitodataO2.csv');
 for i=1:12
-    parentalO2=[parentalO2;data(i,29:36)'];
-    brm2O2=[brm2O2;data(i,38:45)'];
-    lm2O2=[lm2O2;data(i,47:54)'];
+    parentalO2=[parentalO2;data(i,1:8)'];
+    brm2O2=[brm2O2;data(i,9:16)'];
+    lm2O2=[lm2O2;data(i,17:24)'];
 end
 
 treatment=repmat([0:3]',24,1);
@@ -126,13 +126,14 @@ FCatp=[(mdlatp.Coefficients.Estimate(2)+mdlatp.Coefficients.Estimate(1))/mdlatp.
 [h,blatp]=ttest2(O2results.lm2(1:8),O2results.brm2(1:8));
 %% Do the same with ECAR data
 %make table
+data=readmatrix('mitodataECAR.csv');
 parentalECAR=[];
 brm2ECAR=[];
 lm2ECAR=[];
-for i=18:29
-    parentalECAR=[parentalECAR;data(i,29:36)'];
-    brm2ECAR=[brm2ECAR;data(i,38:45)'];
-    lm2ECAR=[lm2ECAR;data(i,47:54)'];
+for i=1:12
+    parentalECAR=[parentalECAR;data(i,1:8)'];
+    brm2ECAR=[brm2ECAR;data(i,9:16)'];
+    lm2ECAR=[lm2ECAR;data(i,17:24)'];
 end
 
 treatment=repmat([0:3]',24,1);
