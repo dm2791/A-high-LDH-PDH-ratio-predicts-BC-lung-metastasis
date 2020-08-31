@@ -1,7 +1,6 @@
 % YSI calculations
 %% load data
-YSIdata=readtable('YSIdata.csv');
-YSIdata=table2array(YSIdata);
+YSIdata=readmatrix('YSIdatamat.csv');
 glucosedata=YSIdata(:,1);
 lactatedata=YSIdata(:,2);
 glutaminedata=YSIdata(:,3);
