@@ -1,6 +1,6 @@
 % unsupervised analysis of metabolon data
 %% load the metabolomics data from file breastnorm.xlsx
-breast = readtable('breastnorm.xlsx');
+breast = readtable('breast.csv');
 
 sampleName = {'P1' 'P2' 'P3' 'P4' 'P5'...
     'B1' 'B2' 'B3' 'B4' 'B5'...
@@ -45,6 +45,7 @@ breastmatglyc_mean(5,:)=[];
 glycmets(5) = [];
 
 figure
+bar(categorical(glycmets),breastmatglyc_mean);
 bar(breastmatglyc_mean);
 
 Bp=[];
