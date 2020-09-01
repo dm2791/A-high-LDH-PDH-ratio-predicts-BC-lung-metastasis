@@ -6,20 +6,19 @@ chipfile=readtable('HG-U133A.na36annot.txt');
 annotation=chipfile(26:end,1:19);
 
 %annotate lung IDs to gene IDs
-lunggsea=readtable('RNA_lungGSEA2.xlsx');
+lunggsea=readtable('lunggsea.csv');
 getIDslung=intersect(lunggsea{:, 1},annotation.x__ForInformationAboutTheAnnotationFileContent);
 rowsl=ismember(annotation.x__ForInformationAboutTheAnnotationFileContent,getIDslung);
 geneIDlung=annotation.Var15(rowsl);
 
-braingsea=readtable('RNA_brainGSEA2.xlsx');
+braingsea=readtable('braingsea.csv');
 getIDsbrain=intersect(braingsea{:, 1},annotation.x__ForInformationAboutTheAnnotationFileContent);
 rowsb=ismember(annotation.x__ForInformationAboutTheAnnotationFileContent,getIDsbrain);
 geneIDbrain=annotation.Var15(rowsb);
 
 %% heatmaps
 %get hallmark glycolysis genes
-glyclistbig=readtable('geneset.txt');
-glyclist=table2array(glyclistbig);
+glyclist=readcell('hallmarkgeneset.csv');
 glycbrain=[];
 glyclung=[];
 for i=1:length(glyclist)
@@ -57,4 +56,4 @@ brainfc=mean(glycbraindata(:,4:5),2)./mean(glycbraindata(:,1:3),2);
 lungfc=mean(glyclungdata(:,3:6),2)./mean(glyclungdata(:,1:2),2);
 datafc=[log2(brainfc),log2(lungfc)];
 clustergram(datafc,'Symmetric','false','Colormap','redbluecmap');
-set(ans,'RowLabels',geneIDlung(glyclung-2))
+
