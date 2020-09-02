@@ -4,17 +4,20 @@ MATLAB scripts to analyze the data and make the figures for the paper "Divergent
 This repository includes some of the data analyzed: 
 
 figure1_metabolomics_and_mithril/breast.csv: Metabolomics data produced by Metabolon.
+
 figure1_metabolomics_and_mithril/hallmarkgeneset.csv: the genes in the HALLMARK GLYCOLYSIS gene set
 figure1_metabolomics_and_mithril/brainoutput_mithril.csv: output file from mithril analysis
 figure1_metabolomics_and_mithril/lungoutput_mithril.csv: output file from mithril analysis
 figure1_metabolomics_and_mithril/brm2lm2output_mithril.csv: output file from mithril analysis
 figure1_metabolomics_and_mithril/brm2gsea.csv: transcriptomic data, brm2 vs parental
 figure1_metabolomics_and_mithril/lm2gsea.csv: transcriptomic data, lm2 vs parental
+
 figure2_fluxes_measured/mitodata_O2.csv: results from seahorse mitochondria assay
 figure2_fluxes_measured/mitodata_ECAR.csv: results from seahorse mitochondria assay
 figure2_fluxes_measured/glycolyticratedata_O2.csv: results from seahorse glycolysis assay
 figure2_fluxes_measured/glycolyticratedata_PER.csv: results from seahorse glycolysis assay
 figure2_fluxes_measured/YSIdatamat.csv: results from YSI assay
+
 figure3_fba_enzyme_activities/capacitymat.csv: results from seahorse
 figure3_fba_enzyme_activities/dependencymat.csv: results from seahorse
 figure3_fba_enzyme_activities/g3pdhdatamat.csv: G3PDH enzyme activities
