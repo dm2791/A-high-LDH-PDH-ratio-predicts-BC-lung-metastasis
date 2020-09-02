@@ -17,10 +17,10 @@ figure2_fluxes_measured/glycolyticratedata_PER.csv: results from seahorse glycol
 figure2_fluxes_measured/YSIdatamat.csv: results from YSI assay
 figure3_fba_enzyme_activities/capacitymat.csv: results from seahorse
 figure3_fba_enzyme_activities/dependencymat.csv: results from seahorse
-figure3_fba_enzyme_activities/g3pdhdatamat.csv: G3PDH enzyme activities 
-figure3_fba_enzyme_activities/pkdatamat.csv: PK enzyme activities 
-figure3_fba_enzyme_activities/pfkdatamat.csv: PFK enzyme activities 
-figure3_fba_enzyme_activities/hexokinasedatamat.csv: hexokinase enzyme activities 
+figure3_fba_enzyme_activities/g3pdhdatamat.csv: G3PDH enzyme activities
+figure3_fba_enzyme_activities/pkdatamat.csv: PK enzyme activities
+figure3_fba_enzyme_activities/pfkdatamat.csv: PFK enzyme activities
+figure3_fba_enzyme_activities/hexokinasedatamat.csv: hexokinase enzyme activities
 figure4_LDHPDH_ratio/ldhbrain.csv: transcriptomic output
 figure4_LDHPDH_ratio/ldhlung.csv: transcriptomic output
 figure4_LDHPDH_ratio/pdhbrain.csv: transcriptomic output
