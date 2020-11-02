@@ -15,13 +15,13 @@ glyc=find(contains(ranked_lungout.PathwayName,'Glycolysis'));
 b.CData(glyc,:) = [0 0 0];
 
 brainout=readtable('brainoutput_mithril.csv');
-ranked_lungout=sortrows(lungout,3);
+ranked_brainout=sortrows(brainout,3);
 figure
-b=bar(ranked_lungout.RawAccumulator);
-nonsig=find(ranked_lungout.pValue>.05);
+b=bar(ranked_brainout.RawAccumulator);
+nonsig=find(ranked_brainout.pValue>.05);
 b.FaceColor = 'flat';
 b.CData(nonsig,:) = repmat([.7 .7 .7],length(nonsig),1);
-glyc=find(contains(ranked_lungout.PathwayName,'Glycolysis'));
+glyc=find(contains(ranked_brainout.PathwayName,'Glycolysis'));
 b.CData(glyc,:) = [0 0 0];
 %% heatmap
 pathway_both=lungout.PathwayName;
