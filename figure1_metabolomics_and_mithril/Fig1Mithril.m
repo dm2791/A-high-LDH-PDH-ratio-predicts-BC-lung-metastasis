@@ -37,5 +37,5 @@ pathway_bl=bvslout.PathwayName;
 heatmaptable_bl=table(pathway_bl,bvslout.CorrectedAccumulator,zeros(249,1),bvslout.AdjustedPValue);
 cgo=clustergram(table2array(heatmaptable_bl(1:61,2:3)),'Colormap','redbluecmap','Standardize','column');
 set(cgo,'RowLabels',pathway_bl(1:61))
-labelnewbl=flip(cgo.RowLabels); %so I can rotate fig in illustrator
+labelnewbl=flip(cgo.RowLabels); 
 
