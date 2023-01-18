@@ -1,4 +1,3 @@
-% analyze metastatic breast cancer project
 %% load data clinical
 metdata_clinical=readtable('data_clinical_patient.txt');
 metdata_clinical(1:4,:)=[];
@@ -42,12 +41,12 @@ disp('done.');
 %% find patients in all three sets, and keep only those
 patient = intersect(clinicalMetadata.participant, mutationMatrix.participant);
 patient = intersect(patient, RNAseq_participants);
-% remove unique from transcriptomics
+% remove from transcriptomics
 mExpression(:, ~ismember(RNAseq_participants, patient)) = [];
 RNAseq_participants(~ismember(RNAseq_participants, patient)) = [];
-% remove unique from clinical metadata
+% remove from clinical metadata
 clinicalMetadata(~ismember(clinicalMetadata.participant, patient), :) = [];
-% remove unique from genomics
+% remove from genomics
 mutationMatrix(~ismember(mutationMatrix.participant, patient), :) = [];
 
 %% reorder patients in clinical to match genomics
@@ -59,8 +58,15 @@ clinicalMetadata = clinicalMetadata(patientReorder, :);
 RNAseq_participants=RNAseq_participants(patientReorder);
 metdata_rna = metdata_rna(:,patientReorder);
 mExpression=table2array(metdata_rna);
+%% ldh/pdh ratio
+ldha=strcmp(geneNames,'LDHA');
+ldhb=strcmp(geneNames,'LDHB');
+pdha1=strcmp(geneNames,'PDHA1');
+pdha2=strcmp(geneNames,'PDHA2');
+ratiocheck=(mExpression(ldha,:)+mExpression(ldhb,:))./(mExpression(pdha1,:)+mExpression(pdha2,:));
+ratiocheck=ratiocheck';
 %% Where do cancers metastasize?
-clinicalMetadata.metSiteExtended = clinicalMetadata.MedRMetastaticSitesAtMetastaticDiagnosis;
+clinicalMetadata.metSiteExtended = clinicalMetadata.MedREverMetastaticSites;
 idxOther = contains(clinicalMetadata.metSiteExtended, 'N/A', 'IgnoreCase', true);
 tblTopMetsThisCancer = groupcounts(clinicalMetadata, 'metSiteExtended');
 tblTopMetsThisCancer = sortrows(tblTopMetsThisCancer, 'GroupCount', 'descend');
@@ -76,20 +82,19 @@ metSite_split_all=table(metSite_split_all);
 tblTopMetsThisCancer = groupcounts(metSite_split_all, 'metSite_split_all');
 tblTopMetsThisCancer = sortrows(tblTopMetsThisCancer, 'GroupCount', 'descend');
 %combine brain, brain/cns
-tblTopMetsThisCancer.GroupCount(7)=3;
-tblTopMetsThisCancer(15,:)=[];
+tblTopMetsThisCancer.GroupCount(7)=7;
+tblTopMetsThisCancer(11,:)=[];
 %remove n/a
-tblTopMetsThisCancer(1,:)=[];
-%remove pleural effusion for simplicity since it's not exactly an organ
-tblTopMetsThisCancer(5,:)=[];
+tblTopMetsThisCancer(2,:)=[];
 tblTopMetsThisCancer = sortrows(tblTopMetsThisCancer, 'GroupCount', 'descend');
+
 %% plot locations
 figure(200)
 bar(tblTopMetsThisCancer.GroupCount)
 xlabel('Metastasis site')
 ylabel('Cases')
 h = gca;
-h.XTick = 1:(height(tblTopMetsThisCancer));
+h.XTick = 1:(height(tblTopMetsThisCancer)-1);
 h.XTickLabel = tblTopMetsThisCancer.metSite_split_all;
 h.XTickLabelRotation = 90;
 title('BRCA')
@@ -114,16 +119,30 @@ h.XTickLabel = mutationMatrix.Properties.VariableNames(orderTopMutations(1:ngene
 h.XTickLabelRotation = 90;
 title('BRCA')
 
-%% find top sites
+%% add stacked mutation info to top met sites
 bone=contains(metSite_split,'BONE');
 liver=contains(metSite_split,'LIVER');
 lung=contains(metSite_split,'LUNG');
 brain=contains(metSite_split,'BRAIN');
-rln=contains(metSite_split,'REGIONAL LYMPH NODE');
 metmatrix=[bone,liver,lung,brain];
 metmatrix=[metmatrix,sum(metmatrix(:,1:4),2)];
 
-%% add stacked mutation info to top met sites
+mut_top=mutationMatrix{:, 'TP53'}==1 & mutationMatrix{:, 'PIK3CA'}~=1;
+mut_top=[mut_top,mutationMatrix{:, 'PIK3CA'}==1 & mutationMatrix{:, 'TP53'}~=1];
+mut_top=[mut_top,mutationMatrix{:, 'PIK3CA'}.*mutationMatrix{:, 'TP53'}==1]; 
+rln=contains(metSite_split,'REGIONAL LYMPH NODE');
+
+bonekeep=mut_top(find(bone),:);
+boneprop=[sum(bonekeep,1),length(bonekeep)-sum(sum(bonekeep,1))]; %p53, pik3ca,both,none
+brainkeep=mut_top(find(brain),:);
+brainprop=[sum(brainkeep,1),length(brainkeep)-sum(sum(brainkeep,1))]; 
+lungkeep=mut_top(find(lung),:);
+lungprop=[sum(lungkeep,1),length(lungkeep)-sum(sum(lungkeep,1))]; 
+liverkeep=mut_top(find(liver),:);
+liverprop=[sum(liverkeep,1),length(liverkeep)-sum(sum(liverkeep,1))]; 
+rlnkeep=mut_top(find(rln),:);
+rlnprop=[sum(rlnkeep,1),length(rlnkeep)-sum(sum(rlnkeep,1))]; 
+
 pik3ca=mutationMatrix{:, 'PIK3CA'}==1 & mutationMatrix{:, 'TP53'}~=1;
 tp53=mutationMatrix{:, 'TP53'}==1 & mutationMatrix{:, 'PIK3CA'}~=1;
 pik3ca_tp53=mutationMatrix{:, 'TP53'}==1 & mutationMatrix{:, 'PIK3CA'}==1;
@@ -148,7 +167,6 @@ h = gca;
 h.XTickLabel = {'PIK3CA','TP53','BOTH','NEITHER'};
 h.XTickLabelRotation = 90;
 title('BRCA')
-
 %% add stacked hormone receptor info to top met sites
 hormone=[];
 hormone=strcmp(clinicalMetadata.PRDEverTripleNegative,'YES'); %tripleneg
@@ -156,6 +174,16 @@ hormone=[hormone,strcmp(clinicalMetadata.PRDEverHER2Positive,'YES')&strcmp(clini
 hormone=[hormone,strcmp(clinicalMetadata.PRDEverHormoneReceptorPositive,'YES')&strcmp(clinicalMetadata.PRDEverHER2Positive,'NO');]; %er/pr+
 hormone=[hormone,strcmp(clinicalMetadata.PRDEverHER2Positive,'YES')&strcmp(clinicalMetadata.PRDEverHormoneReceptorPositive,'YES');]; %er/pr/her2+
 
+bonekeep=hormone(find(bone),:);
+boneprop=[sum(bonekeep,1)]; %tripleneg,her2,er/pr,er/pr/her2
+brainkeep=hormone(find(brain),:);
+brainprop=[sum(brainkeep,1)]; 
+lungkeep=hormone(find(lung),:);
+lungprop=[sum(lungkeep,1)]; 
+liverkeep=hormone(find(liver),:);
+liverprop=[sum(liverkeep,1)]; 
+rlnkeep=hormone(find(rln),:);
+rlnprop=[sum(rlnkeep,1)]; 
 
 tripleneg=hormone(:,1);
 her2=hormone(:,2);
@@ -180,14 +208,23 @@ h = gca;
 h.XTickLabel = {'TripleNegative','Her2+','ER/PR+','ER/PR/Her2+'};
 h.XTickLabelRotation = 90;
 title('BRCA')
-
-%% archetypes
+%% nnmf
 [W2,H2] = nnmf(mExpression',6);
 [M,arch]=max(W2,[],2);
 archetype=zeros(113,6);
 for i=1:113
     archetype(i,arch(i))=1;
 end
+bonekeep=archetype(find(bone),:);
+boneprop=[sum(bonekeep,1)]; %tripleneg,her2,er/pr,er/pr/her2
+brainkeep=archetype(find(brain),:);
+brainprop=[sum(brainkeep,1)]; 
+lungkeep=archetype(find(lung),:);
+lungprop=[sum(lungkeep,1)]; 
+liverkeep=archetype(find(liver),:);
+liverprop=[sum(liverkeep,1)]; 
+rlnkeep=archetype(find(rln),:);
+rlnprop=[sum(rlnkeep,1)]; 
 
 arch1=archetype(:,1);
 arch2=archetype(:,2);
@@ -219,77 +256,148 @@ h.XTickLabel = {'Arch1','Arch2','Arch3','Arch4','Arch5','Arch6'};
 h.XTickLabelRotation = 90;
 title('BRCA')
 
-%plot archetypes on umap
+%plot archetypes on PCA
 expression_plus=[mExpression';H2]; %add perfect fit archetype samples to expression set
+D = pdist(expression_plus);
+Z=squareform(D);
+[coeff,score,latent,tsquared,explained,mu] = pca(Z);
 [W4,H4] = nnmf(expression_plus,6);
 [M4,arch4]=max(W4,[],2);
 archetype2=zeros(119,6);
 for i=1:119
     archetype2(i,arch4(i))=1;
 end
-%z-score data
+%try z-scoring data
 expression_plusZ = zscore(expression_plus,0,2);
+D2 = pdist(expression_plusZ);
+Z2=squareform(D2);
+[coeff,score,latent,tsquared,explained,mu] = pca(Z2);
 [score, umap, clusterIdentifiers] = run_umap(expression_plusZ);
 
 figure
 h = gscatter(score(:, 1), score(:, 2), archetype2);
 hold on
-scatter(score(114:119,1),score(114:119,2),200,'kx');
+scatter(score(114,1),score(114,2),200,'mx');
+scatter(score(115,1),score(115,2),200,'cx');
+scatter(score(116,1),score(116,2),200,'bx');
+scatter(score(117,1),score(117,2),200,'gx');
+scatter(score(118,1),score(118,2),200,'yx');
+scatter(score(119,1),score(119,2),200,'rx');
 hold off
 legend({'arch1','arch2','arch3','arch4','arch5','arch6','archetype centers'})
 xlabel('UMAP1')
 ylabel('UMAP2')
 
-%% make LDH and PDH tables
-patients=metdata_rna.Properties.VariableNames;
-patients=erase(patients,'MBC_');
-patients=extractBefore(patients,'_Tumor');
-patient_select=ismember(metdata_clinical.x_PatientIdentifier,patients);
-patient_select=metdata_clinical(patient_select,:);
-combined_data=[patient_select.x_PatientIdentifier,patient_select.MedRMetastaticSitesAtMetastaticDiagnosis,patient_select.MedRLungMetsAtMetsDx,patient_select.MedRBrain_CNSMetsAtMetsDx];
-
-ldhb=[];
-ldha=[];
-pdha1=[];
-pdha2=[];
+%% feature selection: use features also available in AACR GENIE dataset
+%make table
+mutnum=sum(m,2);
+stage=clinicalMetadata.MedRStageAtDiagnosis;
+subtype=[];
 for i=1:113
-    ind=find(strcmp(patients,combined_data(i)));
-    ldhb(i)=table2array(metdata_rna(4124,ind(1)));
-    ldha(i)=table2array(metdata_rna(7217,ind(1)));
-    pdha1(i)=table2array(metdata_rna(6812,ind(1)));
-    pdha2(i)=table2array(metdata_rna(11518,ind(1)));
+    sub=find(hormone(i,:),1);
+    if isempty(sub)
+        subtype(i)=NaN;
+    else
+    subtype(i)=find(hormone(i,:),1);
+    end
 end
-ldhb=ldhb';
-ldha=ldha';
-pdha1=pdha1';
-pdha2=pdha2';
-ratio=(ldhb+ldha)./(pdha1+pdha2);
+
+lymph=contains(metSite_split,'LYMPH NODE');
+metmatrix_top5=[bone,liver,lung,brain,lymph];
+metmatrix_top5=[metmatrix_top5,sum(metmatrix_top5(:,1:5),2)];
+predictors=[mutnum,stage,subtype',arch,ratiocheck];
+predictormatrix=[];
+for i=1:113
+    numrep=metmatrix_top5(i,6);
+    if numrep==0
+        numrep=1;
+    end
+    predictormatrix=[predictormatrix;repmat(predictors(i,:),[numrep,1])];
+end
+predictortable=array2table(predictormatrix);
+predictortable.Properties.VariableNames={'mutation num' 'stage' 'subtype' 'archetype','ldhpdh'};
+ 
+predictortable.subtype=categorical(predictortable.subtype);
+predictortable.subtype(predictortable.subtype=='1')={'tripleneg'};
+predictortable.subtype(predictortable.subtype=='2')={'her2'};
+predictortable.subtype(predictortable.subtype=='3')={'erpr'};
+predictortable.subtype(predictortable.subtype=='4')={'erprher2'};
+predictortable.archetype=categorical(predictortable.archetype);
+predictortable.stage=categorical(predictortable.stage);
 %%
-lung=strcmp(combined_data(:,3),'YES');
-brain=strcmp(combined_data(:,4),'YES');
-none=strcmp(combined_data(:,2),'N/A');
-other2=strcmp(combined_data(:,3),'NO') & strcmp(combined_data(:,4),'NO'); %not lung or brain
+responsevar=[];
+for i=1:113
+    response=find(metmatrix_top5(i,1:5));
+    if isempty(response)
+        responsevar=[responsevar;7];
+    else
+    responsevar=[responsevar;response'];
+    end
+end
 
-lungdata=[ldhb(lung),ldha(lung),pdha1(lung),pdha2(lung)];
-braindata=[ldhb(brain),ldha(brain),pdha1(brain),pdha2(brain)];
-otherdata2=[ldhb(other2),ldha(other2),pdha1(other2),pdha2(other2)];
-lung_ratio=ratio(lung);
-brain_ratio=ratio(brain);
-other_ratio2=ratio(other2);
+responsevar_names={};
+responsevar_names(responsevar==1)={'bone'};
+responsevar_names(responsevar==2)={'liver'};
+responsevar_names(responsevar==3)={'lung'};
+responsevar_names(responsevar==4)={'brain'};
+responsevar_names(responsevar==5)={'lymph'};
+responsevar_names(responsevar==7)={'other'};
+%% model
+predictortable.response=responsevar_names';
+[idx score] = fscchi2(predictortable,"response");
+pvals=exp(-score); %none are significant except ldhpdh, smallest pval at .05 and ranked most important
+pvals=round(pvals,2);
+figure,bar(score(idx))
+set(gca,'xtick',1:5,'xticklabel',predictortable.Properties.VariableNames(idx));
+xlabel('Predictor rank')
+ylabel('Predictor importance score')
 
-[h,p1]=ttest2(lung_ratio,other_ratio2);
-[h,p2]=ttest2(other_ratio2,brain_ratio);
-grp = [ones(1,length(other_ratio2)),ones(1,length(brain_ratio))*2,ones(1,length(lung_ratio))*3];
-figure, boxplot([other_ratio2;brain_ratio;lung_ratio],grp)
-
-%% overlay top ldh/pdh ratios on umap
-
-[B,I] = sort(ratio);
-
-%plot color range
-figure,scatter(score(1:113, 1), score(1:113, 2), [], ratio, 'filled')
-set(gca, 'CLim', [0, 8])
-%circle lung
+figure,bar(log(pvals(idx)))
 hold on
-scatter(score(find(lung),1),score(find(lung),2),100,'ko'); %lung
-hold off
+plot([0 6],[log(.05) log(.05)],'LineStyle','--','Color','k')
+set(gca,'xtick',1:5,'xticklabel',predictortable.Properties.VariableNames(idx));
+xtickangle(90)
+xlabel('Predictor rank')
+ylabel('pvalue')
+
+ldhaval=[];
+ldhbval=[];
+pdha1val=[];
+pdha2val=[];
+for i=1:113
+    numrep=metmatrix_top5(i,6);
+    if numrep==0
+        numrep=1;
+    end
+    ldhaval=[ldhaval;repmat(table2array(metdata_rna(find(ldha),i))',[numrep,1])];
+    ldhbval=[ldhbval;repmat(table2array(metdata_rna(find(ldhb),i))',[numrep,1])];
+    pdha1val=[pdha1val;repmat(table2array(metdata_rna(find(pdha1),i))',[numrep,1])];
+    pdha2val=[pdha2val;repmat(table2array(metdata_rna(find(pdha2),i))',[numrep,1])];
+end
+predictortable_full=array2table([predictormatrix,ldhaval,ldhbval,pdha1val,pdha2val]);
+predictortable_full.Properties.VariableNames={'mutation num' 'stage' 'subtype' 'archetype','ldhpdh','ldha','ldhb','pdha1','pdha2'};
+ 
+predictortable_full.subtype=categorical(predictortable_full.subtype);
+predictortable_full.subtype(predictortable_full.subtype=='1')={'tripleneg'};
+predictortable_full.subtype(predictortable_full.subtype=='2')={'her2'};
+predictortable_full.subtype(predictortable_full.subtype=='3')={'erpr'};
+predictortable_full.subtype(predictortable_full.subtype=='4')={'erprher2'};
+predictortable_full.archetype=categorical(predictortable_full.archetype);
+
+predictortable_full.response=responsevar_names';
+[idx score] = fscchi2(predictortable_full,"response");
+pvals=exp(-score); %none are significant except ldhpdh, smallest pval at .05 and ranked most important
+pvals=round(pvals,2);
+figure,bar(score(idx))
+set(gca,'xtick',1:9,'xticklabel',predictortable_full.Properties.VariableNames(idx));
+xtickangle(90)
+xlabel('Predictor rank')
+ylabel('Predictor importance score')
+
+figure,bar(log(pvals(idx)))
+hold on
+plot([0 10],[log(.05) log(.05)],'LineStyle','--','Color','k')
+set(gca,'xtick',1:9,'xticklabel',predictortable_full.Properties.VariableNames(idx));
+xtickangle(90)
+xlabel('Predictor rank')
+ylabel('logpvalue')
