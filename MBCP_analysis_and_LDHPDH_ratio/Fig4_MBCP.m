@@ -267,7 +267,7 @@ archetype2=zeros(119,6);
 for i=1:119
     archetype2(i,arch4(i))=1;
 end
-%try z-scoring data
+
 expression_plusZ = zscore(expression_plus,0,2);
 D2 = pdist(expression_plusZ);
 Z2=squareform(D2);
