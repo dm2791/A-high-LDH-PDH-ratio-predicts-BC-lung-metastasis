@@ -1,5 +1,8 @@
-# Divergent-use-of-metabolic-fluxes-in-breast-cancer-metastasis
-MATLAB scripts to analyze the data and make the figures for the paper "Divergent use of metabolic fluxes in breast cancer metastasis".
+# A-high-LDH-PDH-ratio-predicts-BC-lung-metastasis
+MATLAB scripts to analyze the data and make the figures for the paper "The ratio of key metabolic transcripts is a predictive biomarker of breast cancer metastasis to the lung", running title "A high LDH/PDH ratio predicts BC lung metastasis"
+
+Associated with this repository is the following metabolomics data release:
+https://zenodo.org/record/7996343
 
 This repository includes some of the data analyzed: 
 
