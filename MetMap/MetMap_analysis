@@ -1,0 +1,102 @@
+%test all breast cancer cell lines on MetMap to see if LDH/PDH correlates
+%with higher lung potential/penetrance
+%% load data
+expression=readtable('Expression_Public_22Q4_subsetted (1).csv');
+annotation=readtable('Supplementary Table 03 MetMap cell line annotation.xlsx');
+brain=readtable('Supplementary Table 04 MetMap 500 met potential.xlsx','Sheet',1);
+lung=readtable('Supplementary Table 04 MetMap 500 met potential.xlsx','Sheet',2);
+liver=readtable('Supplementary Table 04 MetMap 500 met potential.xlsx','Sheet',3);
+bone=readtable('Supplementary Table 04 MetMap 500 met potential.xlsx','Sheet',4);
+kidney=readtable('Supplementary Table 04 MetMap 500 met potential.xlsx','Sheet',5);
+%% select only breast cancer cell lines
+sel=strfind(brain.Var1,'BREAST');
+bc=find(~cellfun(@isempty,sel));
+brain=brain(bc,:);
+
+sel=strfind(lung.Var1,'BREAST');
+bc=find(~cellfun(@isempty,sel));
+lung=lung(bc,:);
+
+sel=strfind(liver.Var1,'BREAST');
+bc=find(~cellfun(@isempty,sel));
+liver=liver(bc,:);
+
+sel=strfind(bone.Var1,'BREAST');
+bc=find(~cellfun(@isempty,sel));
+bone=bone(bc,:);
+
+sel=strfind(kidney.Var1,'BREAST');
+bc=find(~cellfun(@isempty,sel));
+kidney=kidney(bc,:);
+%% trim cell line name
+brain.Var1=extractBefore(brain.Var1,'_');
+lung.Var1=extractBefore(lung.Var1,'_');
+liver.Var1=extractBefore(liver.Var1,'_');
+bone.Var1=extractBefore(bone.Var1,'_');
+kidney.Var1=extractBefore(kidney.Var1,'_');
+%% select only lines that are common to both data sets
+[ia ic]=ismember(brain.Var1,expression.cell_line_display_name);
+rem=find(ia==0);
+brain(rem,:)=[];
+lung(rem,:)=[];
+liver(rem,:)=[];
+bone(rem,:)=[];
+kidney(rem,:)=[];
+
+[ia ic]=ismember(brain.Var1,expression.cell_line_display_name);
+expression_keep=expression(ic,:);
+%% calculate ldh/pdh ratio
+expression_keep.ratio=(expression_keep.LDHA+expression_keep.LDHB)./(expression_keep.PDHA1+expression_keep.PDHB);
+%% annotate by hormone receptor
+[ia ic]=ismember(expression_keep.depmap_id,annotation.depmap_id);
+recep=annotation(ic,[1 4 14]);
+sel=strfind(recep.cancer_subtype,'HER2neg');
+her2neg=find(~cellfun(@isempty,sel));
+expression_her2neg=expression_keep(her2neg,:);
+lung_her2neg=lung(her2neg,:);
+
+%% combine potential and penetrance: lung
+lung_trop=(1./abs(lung.mean)).*lung.penetrance;
+pos=find(lung_trop>0);
+posher2neg=intersect(pos,her2neg);
+c=cool(length(posher2neg));
+figure,gscatter(lung.penetrance(posher2neg),lung.mean(posher2neg),expression_keep.ratio(posher2neg),c);
+dx = -0.03; dy = -0.02; % displacement so the text does not overlay the data points
+text(lung.penetrance(posher2neg)+dx, lung.mean(posher2neg)+dy, expression_keep.cell_line_display_name(posher2neg));
+colorbar
+colormap cool
+
+hightrop=lung.penetrance>.5 & lung.mean>-2.5;
+hightrop_posher2neg=intersect(find(hightrop),posher2neg);
+lowtrop_posher2neg=intersect(find(~hightrop),posher2neg);
+figure,bar([mean(expression_keep.ratio(lowtrop_posher2neg)),mean(expression_keep.ratio(hightrop_posher2neg))])
+hold on
+x=[1 2];
+er = errorbar(x,[mean(expression_keep.ratio(lowtrop_posher2neg)),mean(expression_keep.ratio(hightrop_posher2neg))],[std(expression_keep.ratio(lowtrop_posher2neg)),std(expression_keep.ratio(hightrop_posher2neg))]); 
+er.Color = [0 0 0]; 
+er.LineStyle = 'none'; 
+hold off
+[h p]=ttest2(expression_keep.ratio(lowtrop_posher2neg),expression_keep.ratio(hightrop_posher2neg)); %.03
+
+%% repeat for brain tropism to see if effect is lung specific
+pos=find(brain.penetrance>0);
+posher2neg=intersect(pos,her2neg);
+
+c=cool(length(posher2neg));
+colormap cool
+figure,gscatter(brain.penetrance(posher2neg),brain.mean(posher2neg),expression_keep.ratio(posher2neg),c);
+dx = -0.01; dy = -0.01; % displacement so the text does not overlay the data points
+text(brain.penetrance(posher2neg)+dx, brain.mean(posher2neg)+dy, expression_keep.cell_line_display_name(posher2neg));
+colorbar
+colormap cool
+
+hightrop=brain.penetrance>.11 & brain.mean>-2;
+hightrop_posher2neg=intersect(find(hightrop),posher2neg);
+lowtrop_posher2neg=intersect(find(~hightrop),posher2neg);
+figure,bar([mean(expression_keep.ratio(lowtrop_posher2neg)),mean(expression_keep.ratio(hightrop_posher2neg))])
+hold on
+x=[1 2];
+er = errorbar(x,[mean(expression_keep.ratio(lowtrop_posher2neg)),mean(expression_keep.ratio(hightrop_posher2neg))],[std(expression_keep.ratio(lowtrop_posher2neg)),std(expression_keep.ratio(hightrop_posher2neg))]); 
+er.Color = [0 0 0]; 
+er.LineStyle = 'none'; 
+hold off
