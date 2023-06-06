@@ -1,0 +1,221 @@
+%% load data
+gluc8hours=readtable('IsoCorrectoR_13C_Results_Corrected NEW.csv');
+
+%reorder to lung parental liver
+livhold=[];
+lunghold=[];
+phold=[];
+for i=2:3:14
+    livhold=[livhold,gluc8hours(:,i),gluc8hours(:,i+15),gluc8hours(:,i+30)];
+    lunghold=[lunghold,gluc8hours(:,i+1),gluc8hours(:,i+15+1),gluc8hours(:,i+30+1)];
+    phold=[phold,gluc8hours(:,i+2),gluc8hours(:,i+15+2),gluc8hours(:,i+30+2)];
+end
+gluc8hours=[gluc8hours(:,1),phold,livhold,lunghold];
+gluc8hoursmat=table2array(gluc8hours(:,2:end));
+%% percent labeled
+pyr_percent=gluc8hoursmat(4,:)./(gluc8hoursmat(1,:)+gluc8hoursmat(4,:))*100;
+lac_percent=gluc8hoursmat(8,:)./(gluc8hoursmat(5,:)+gluc8hoursmat(8,:))*100;
+cit2_percent=gluc8hoursmat(17,:)./(gluc8hoursmat(15,:)+gluc8hoursmat(17,:))*100;
+cit4_percent=gluc8hoursmat(19,:)./(gluc8hoursmat(15,:)+gluc8hoursmat(19,:))*100;
+cit5_percent=gluc8hoursmat(20,:)./(gluc8hoursmat(15,:)+gluc8hoursmat(20,:))*100;
+cit6_percent=gluc8hoursmat(21,:)./(gluc8hoursmat(15,:)+gluc8hoursmat(21,:))*100;
+citall=gluc8hoursmat(17,:)+gluc8hoursmat(19,:)+gluc8hoursmat(20,:)+gluc8hoursmat(21,:);
+citall(isnan(citall))=0;
+citall_percent=(gluc8hoursmat(17,:)+gluc8hoursmat(19,:)+gluc8hoursmat(20,:)+gluc8hoursmat(21,:))./(gluc8hoursmat(17,:)+gluc8hoursmat(19,:)+gluc8hoursmat(20,:)+gluc8hoursmat(21,:)+gluc8hoursmat(15,:))*100;
+citall_percent(isnan(citall_percent))=0;
+%% parental
+pyr_unlabledP=[];
+pyr_unlabledP_err=[];
+pyr_3CP=[];
+pyr_3CP_err=[];
+pyr_percentP=[];
+pyr_percentP_err=[];
+
+cit_unlabledP=[];
+cit_unlabledP_err=[];
+cit_allCP=[];
+cit_allCP_err=[];
+cit_percentP=[];
+cit_percentP_err=[];
+
+lac_unlabledP=[];
+lac_unlabledP_err=[];
+lac_3CP=[];
+lac_3CP_err=[];
+lac_percentP=[];
+lac_percentP_err=[];
+
+for i=1:3:14
+    pyr_unlabledP=[pyr_unlabledP,mean(gluc8hoursmat(1,i:i+2))]; 
+    pyr_unlabledP_err=[pyr_unlabledP_err,std(gluc8hoursmat(1,i:i+2))]; 
+    pyr_3CP=[pyr_3CP,mean(gluc8hoursmat(4,i:i+2))]; 
+    pyr_3CP_err=[pyr_3CP_err,std(gluc8hoursmat(4,i:i+2))]; 
+    pyr_percentP=[pyr_percentP,mean(pyr_percent(i:i+2))];
+    pyr_percentP_err=[pyr_percentP_err,std(pyr_percent(i:i+2))];
+    
+    cit_unlabledP=[cit_unlabledP,mean(gluc8hoursmat(15,i:i+2))]; 
+    cit_unlabledP_err=[cit_unlabledP_err,std(gluc8hoursmat(15,i:i+2))]; 
+    cit_allCP=[cit_allCP,mean(citall(i:i+2))]; 
+    cit_allCP_err=[cit_allCP_err,std(citall(i:i+2))]; 
+    cit_percentP=[cit_percentP,mean(citall_percent(i:i+2))];
+    cit_percentP_err=[cit_percentP_err,std(citall_percent(i:i+2))];
+    
+    lac_unlabledP=[lac_unlabledP,mean(gluc8hoursmat(5,i:i+2))]; 
+    lac_unlabledP_err=[lac_unlabledP_err,std(gluc8hoursmat(5,i:i+2))]; 
+    lac_3CP=[lac_3CP,mean(gluc8hoursmat(8,i:i+2))]; 
+    lac_3CP_err=[lac_3CP_err,std(gluc8hoursmat(8,i:i+2))]; 
+    lac_percentP=[lac_percentP,mean(lac_percent(i:i+2))];
+    lac_percentP_err=[lac_percentP_err,std(lac_percent(i:i+2))];
+end
+%% liver
+pyr_unlabledB=[];
+pyr_unlabledB_err=[];
+pyr_3CB=[];
+pyr_3CB_err=[];
+pyr_percentB=[];
+pyr_percentB_err=[];
+
+cit_unlabledB=[];
+cit_unlabledB_err=[];
+cit_allCB=[];
+cit_allCB_err=[];
+cit_percentB=[];
+cit_percentB_err=[];
+
+lac_unlabledB=[];
+lac_unlabledB_err=[];
+lac_3CB=[];
+lac_3CB_err=[];
+lac_percentB=[];
+lac_percentB_err=[];
+
+for i=16:3:28
+    pyr_unlabledB=[pyr_unlabledB,mean(gluc8hoursmat(1,i:i+2))]; 
+    pyr_unlabledB_err=[pyr_unlabledB_err,std(gluc8hoursmat(1,i:i+2))]; 
+    pyr_3CB=[pyr_3CB,mean(gluc8hoursmat(4,i:i+2))]; 
+    pyr_3CB_err=[pyr_3CB_err,std(gluc8hoursmat(4,i:i+2))]; 
+    pyr_percentB=[pyr_percentB,mean(pyr_percent(i:i+2))];
+    pyr_percentB_err=[pyr_percentB_err,std(pyr_percent(i:i+2))];
+    
+    cit_unlabledB=[cit_unlabledB,mean(gluc8hoursmat(12,i:i+2))]; 
+    cit_unlabledB_err=[cit_unlabledB_err,std(gluc8hoursmat(12,i:i+2))]; 
+    cit_allCB=[cit_allCB,mean(citall(i:i+2))]; 
+    cit_allCB_err=[cit_allCB_err,std(citall(i:i+2))]; 
+    cit_percentB=[cit_percentB,mean(citall_percent(i:i+2))];
+    cit_percentB_err=[cit_percentB_err,std(citall_percent(i:i+2))];
+    
+    lac_unlabledB=[lac_unlabledB,mean(gluc8hoursmat(5,i:i+2))]; 
+    lac_unlabledB_err=[lac_unlabledB_err,std(gluc8hoursmat(5,i:i+2))]; 
+    lac_3CB=[lac_3CB,mean(gluc8hoursmat(8,i:i+2))]; 
+    lac_3CB_err=[lac_3CB_err,std(gluc8hoursmat(8,i:i+2))]; 
+    lac_percentB=[lac_percentB,mean(lac_percent(i:i+2))];
+    lac_percentB_err=[lac_percentB_err,std(lac_percent(i:i+2))];
+end
+%% lung
+pyr_unlabledL=[];
+pyr_unlabledL_err=[];
+pyr_3CL=[];
+pyr_3CL_err=[];
+pyr_percentL=[];
+pyr_percentL_err=[];
+
+cit_unlabledL=[];
+cit_unlabledL_err=[];
+cit_allCL=[];
+cit_allCL_err=[];
+cit_percentL=[];
+cit_percentL_err=[];
+
+lac_unlabledL=[];
+lac_unlabledL_err=[];
+lac_3CL=[];
+lac_3CL_err=[];
+lac_percentL=[];
+lac_percentL_err=[];
+
+for i=31:3:43
+    pyr_unlabledL=[pyr_unlabledL,mean(gluc8hoursmat(1,i:i+2))]; 
+    pyr_unlabledL_err=[pyr_unlabledL_err,std(gluc8hoursmat(1,i:i+2))]; 
+    pyr_3CL=[pyr_3CL,mean(gluc8hoursmat(4,i:i+2))]; 
+    pyr_3CL_err=[pyr_3CL_err,std(gluc8hoursmat(4,i:i+2))]; 
+    pyr_percentL=[pyr_percentL,mean(pyr_percent(i:i+2))];
+    pyr_percentL_err=[pyr_percentL_err,std(pyr_percent(i:i+2))];
+    
+    cit_unlabledL=[cit_unlabledL,mean(gluc8hoursmat(12,i:i+2))]; 
+    cit_unlabledL_err=[cit_unlabledL_err,std(gluc8hoursmat(12,i:i+2))]; 
+    cit_allCL=[cit_allCL,mean(citall(i:i+2))]; 
+    cit_allCL_err=[cit_allCL_err,std(citall(i:i+2))]; 
+    cit_percentL=[cit_percentL,mean(citall_percent(i:i+2))];
+    cit_percentL_err=[cit_percentL_err,std(citall_percent(i:i+2))];
+    
+    lac_unlabledL=[lac_unlabledL,mean(gluc8hoursmat(5,i:i+2))]; 
+    lac_unlabledL_err=[lac_unlabledL_err,std(gluc8hoursmat(5,i:i+2))]; 
+    lac_3CL=[lac_3CL,mean(gluc8hoursmat(8,i:i+2))]; 
+    lac_3CL_err=[lac_3CL_err,std(gluc8hoursmat(8,i:i+2))]; 
+    lac_percentL=[lac_percentL,mean(lac_percent(i:i+2))];
+    lac_percentL_err=[lac_percentL_err,std(lac_percent(i:i+2))];
+end
+%% plot turnover: take into account total pool
+lacpoolP=gluc8hoursmat(5,1:3);
+lacpoolB=gluc8hoursmat(5,16:18);
+lacpoolL=gluc8hoursmat(5,31:33);
+lac_percentPnorm=[];
+for i=1:3:14
+    lac_percentPnorm=[lac_percentPnorm;lac_percent(i:i+2).*lacpoolP];
+end
+lac_percentBnorm=[];
+for i=16:3:28
+    lac_percentBnorm=[lac_percentBnorm;lac_percent(i:i+2).*lacpoolB];
+end
+lac_percentLnorm=[];
+for i=31:3:43
+    lac_percentLnorm=[lac_percentLnorm;lac_percent(i:i+2).*lacpoolL];
+end
+
+lac_percentPnorm_mean=mean(lac_percentPnorm,2);
+lac_percentBnorm_mean=mean(lac_percentBnorm,2);
+lac_percentLnorm_mean=mean(lac_percentLnorm,2);
+lac_percentPnorm_err=std(lac_percentPnorm,0,2);
+lac_percentBnorm_err=std(lac_percentBnorm,0,2);
+lac_percentLnorm_err=std(lac_percentLnorm,0,2);
+
+%plot graphs together
+x = [0,2,4,6,8];
+figure, hold on
+plot(x,lac_percentPnorm_mean)   
+er = errorbar(x,lac_percentPnorm_mean,lac_percentPnorm_err/2,lac_percentPnorm_err/2); 
+er.Color = [0 0 0]; 
+er.LineStyle = 'none'; 
+plot(x,lac_percentBnorm_mean)   
+er = errorbar(x,lac_percentBnorm_mean,lac_percentBnorm_err/2,lac_percentBnorm_err/2); 
+er.Color = [0 0 0]; 
+er.LineStyle = 'none';  
+plot(x,lac_percentLnorm_mean)   
+er = errorbar(x,lac_percentLnorm_mean,lac_percentLnorm_err/2,lac_percentLnorm_err/2); 
+er.Color = [0 0 0]; 
+er.LineStyle = 'none';  
+hold off
+legend('parental',' ', 'liver',' ','lung',' ');
+ylabel('percent labeled * inital pool')
+xlabel('hours')
+title('Lactate turnover')
+%plot just total labeled lactate
+x = [0,2,4,6,8];
+figure,plot(x,lac_3CP)   
+hold on
+er = errorbar(x,lac_3CP,lac_3CP_err/2,lac_3CP_err/2);    
+er.Color = [0 0 0];                            
+er.LineStyle = 'none';  
+plot(x,lac_3CB)   
+er = errorbar(x,lac_3CB,lac_3CB_err/2,lac_3CB_err/2);    
+er.Color = [0 0 0];                            
+er.LineStyle = 'none';  
+plot(x,lac_3CL)   
+er = errorbar(x,lac_3CL,lac_3CL_err/2,lac_3CL_err/2);    
+er.Color = [0 0 0];                            
+er.LineStyle = 'none';  
+hold off
+legend('parental',' ', 'liver',' ','lung',' ');
+ylabel('metabolite level')
+xlabel('hours')
+title('labeled lactate')
